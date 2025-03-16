@@ -6,6 +6,8 @@
 
 暂时预览不了啦，vps被干死了😅。有兴趣的可以点下面的链接预览hexo版本的，基本差不多。
 
+我正在尝试恢复，你可以点这里查看 [https://final.linkpark.site](https://final.linkpark.site)
+
 ## hexo version
 
 我刚刚制作了这个主题的hexo同款，如果你有兴趣可以点这里查看
