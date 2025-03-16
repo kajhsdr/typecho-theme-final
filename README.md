@@ -4,9 +4,7 @@
 
 ## preview
 
-https://final.linkpark.site/
-
-(Do not attack my vps please. 请不要攻击我的小鸡，谢谢大佬…)
+暂时预览不了啦，vps被干死了😅。有兴趣的可以点下面的链接预览hexo版本的，基本差不多。
 
 ## hexo version
 
