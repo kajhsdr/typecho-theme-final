@@ -4,9 +4,9 @@
 
 ## preview
 
-暂时预览不了啦，vps被干死了😅。有兴趣的可以点下面的链接预览hexo版本的，基本差不多。
+[https://final.linkpark.site](https://final.linkpark.site)
 
-我正在尝试恢复，你可以点这里查看 [https://final.linkpark.site](https://final.linkpark.site)
+我打开了Under Attack 模式，访问可能比较慢
 
 ## hexo version
 
