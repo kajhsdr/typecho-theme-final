@@ -1,15 +1,17 @@
-<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
-<?php $this->need('header.php'); ?>
+<?php if (!defined("__TYPECHO_ROOT_DIR__")) {
+    exit();
+} ?>
+<?php $this->need("header.php"); ?>
 <main>
     <h1><a href="<?php $this->options->siteUrl(); ?>"><?php $this->title(); ?></a></h1>
     <p>
         <i>
-            <time datetime="<?php $this->date('c'); ?>">
-                <?php $this->date('Y-m-d H:i'); ?>
+            <time datetime="<?php $this->date("c"); ?>">
+                <?php $this->date("Y-m-d H:i"); ?>
             </time>
             · 
         </i>
-        <?php $this->category(' · '); ?>
+        <?php $this->category(" · "); ?>
     </p>
     <article>
     <?php if ($this->content): ?>
@@ -19,7 +21,7 @@
     <?php endif; ?>
     </article>
     <p class="tags">
-        <?php $this->tags(' · ', true, ' '); ?>
+        <?php $this->tags(" · ", true, " "); ?>
     </p>
 </main>
-<?php $this->need('footer.php'); ?>
+<?php $this->need("footer.php"); ?>

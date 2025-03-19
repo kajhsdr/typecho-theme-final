@@ -1,0 +1,191 @@
+.comment-container form {
+    border: 0px;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    /* 白天模式背景 */
+}
+
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#comments {
+    list-style-type: none;
+    padding: 0;
+}
+
+.comment-body {
+    padding: 15px 20px;
+    list-style-type: none !important;
+    border-radius: 10px;
+    margin: 2.5rem 0px;
+    background-color: #f0f0f0;
+    /* 白天模式背景 */
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-by-author {
+    color: #007bff;
+}
+
+.comment-by-user {
+    color: #28a745;
+}
+
+.comment-content {
+    background-color: #f0f0f0;
+    /* 白天模式背景 */
+    border-radius: 10px;
+    padding: 5px 20px;
+    background-color: #fefefe;
+    /* 白天模式背景 */
+    margin-bottom: 10px;
+}
+
+.comment-meta {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.comment-reply {
+    cursor: pointer;
+    color: #007bff;
+}
+
+.comment-reply:hover {
+    text-decoration: underline;
+}
+
+.comment-child {
+    margin-left: 30px;
+}
+
+.comment-list {
+    padding: 0px;
+    margin: 20px 0px 0px 0px;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 0px;
+    background-color: #fefefe;
+    /* 白天模式背景 */
+    box-sizing: border-box;
+}
+
+.submit {
+    color: #090909;
+    padding: 0.7em 1.7em;
+    font-size: 18px;
+    border-radius: 0.5em;
+    width: 100%;
+    background: #ffffff;
+    /* 白天模式背景 */
+    cursor: pointer;
+    border: 0;
+}
+
+.response {
+    color: #888;
+}
+
+.lists-navigator {
+    text-align: center;
+    margin-top: 20px;
+}
+
+textarea {
+    height: 10rem;
+    resize: none;
+    outline: none;
+}
+
+form input,
+form textarea {
+    font-family: 'Noto Sans SC', consolas, monospace;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    background: #ffffff;
+    /* 白天模式背景 */
+}
+
+/* 夜间模式样式 */
+@media (prefers-color-scheme: dark) {
+    .comment-container form {
+        background-color: #2d2d2d;
+        /* 夜间模式背景 */
+    }
+
+    .comment-body {
+        background-color: #2d2d2d;
+        /* 夜间模式背景 */
+    }
+
+    .comment-content {
+        background-color: #333;
+        /* 夜间模式背景 */
+    }
+
+    .comment-author,
+    .comment-meta,
+    .response {
+        color: #e0e0e0;
+        /* 夜间模式文字颜色 */
+    }
+
+    .comment-by-author {
+        color: #1e90ff;
+        /* 夜间模式链接颜色 */
+    }
+
+    .comment-by-user {
+        color: #32cd32;
+        /* 夜间模式用户颜色 */
+    }
+
+    .form-control {
+        background-color: #444;
+        /* 夜间模式输入框背景 */
+        color: #e0e0e0;
+        /* 夜间模式输入框文字颜色 */
+    }
+
+    .submit {
+        background: #555;
+        /* 夜间模式提交按钮背景 */
+        color: #e0e0e0;
+        /* 夜间模式提交按钮文字颜色 */
+    }
+
+    textarea {
+        background: #444;
+        /* 夜间模式 textarea 背景 */
+        color: #e0e0e0;
+        /* 夜间模式 textarea 文字颜色 */
+    }
+}

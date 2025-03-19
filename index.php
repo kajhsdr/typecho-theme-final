@@ -1,15 +1,17 @@
 <?php
 /**
- * 你的最后一个主题。接下来请专心写作吧。
- * Your final theme. Please focus on writing next.
+ * 或许是你的最终选择，接下来请专心写作吧。
+ * Your final choice. Please focus on writing next.
  *
  * @package final
  * @author HoytZhang
- * @version 1.x
+ * @version 1.6
  * @link https://banzhuanriji.com
  */
-if (!defined('__TYPECHO_ROOT_DIR__')) exit;
-$this->need('header.php');
+if (!defined("__TYPECHO_ROOT_DIR__")) {
+    exit();
+}
+$this->need("header.php");
 ?>
 <a class="title" href="/">
     <h1><?php $this->options->title(); ?></h1>
@@ -19,16 +21,18 @@ $this->need('header.php');
 <?php if ($this->have()): ?>
 <?php while ($this->next()): ?>
     <div class="post-item">
-    <a href="<?php $this->permalink() ?>"><?php $this->title() ?></a><time datetime="<?php $this->date('c'); ?>" itemprop="datePublished"><?php $this->date(); ?></time>
+    <a href="<?php $this->permalink(); ?>"><?php $this->title(); ?></a><time datetime="<?php $this->date(
+    "c"
+); ?>" itemprop="datePublished"><?php $this->date(); ?></time>
     </div>
 <?php endwhile; ?>
 
-<?php if ( $this->is('archive') || $this->is('index') ) { ?>
+<?php if ($this->is("archive") || $this->is("index")) { ?>
 <div class="post-pagination">
-<?php $this->pageNav('&nbsp;←&nbsp;', '&nbsp;→&nbsp;', '5', '…'); ?>
+<?php $this->pageNav("&nbsp;←&nbsp;", "&nbsp;→&nbsp;", "5", "…"); ?>
 </div>
-<?php }; ?>
-<?php else : ?><article><em>空空如也 ...</em></article><?php endif; ?>
+<?php } ?>
+<?php else: ?><article><em>空空如也 ...</em></article><?php endif; ?>
 
 </main>
-<?php $this->need('footer.php'); ?>
+<?php $this->need("footer.php"); ?>
