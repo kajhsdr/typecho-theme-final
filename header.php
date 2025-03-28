@@ -31,6 +31,10 @@
     <?php if (method_exists($this, "header")): ?>
         <?php $this->header(); ?>
     <?php endif; ?>
+
+    <?php if ($this->options->addhead): ?>
+        <?php echo $this->options->addhead; ?>
+    <?php endif; ?>
 </head>
 <body class="home">
 <header>
