@@ -8,6 +8,17 @@
 
 我打开了Under Attack 模式，访问可能比较慢
 
+### Pagespeed Insights
+
+因为Windows10&11在更新之后添加了Noto Sans字体，并且Chrome默认把Noto Sans设置为了系统无衬线字体的默认字体，所以移除掉了字体引用部分。
+
+在修改了一些CSS后，pc 和 移动端 全100分。
+
+![移动端](https://github.com/user-attachments/assets/6d9e3aa4-338b-4eea-9a37-cdb20c7d59f6)
+![桌面端](https://github.com/user-attachments/assets/fa7ed9be-6fe6-4164-a577-be8d094e1631)
+
+[报告链接](https://pagespeed.web.dev/analysis/https-final-linkpark-site/6g63dloic6?hl=zh-cn&form_factor=mobile)
+
 ### 待办
 
 - [ ] SEO优化，目前的header部分好乱
