@@ -220,10 +220,11 @@ ul.posts li a:visited {
 
 footer,
 footer a {
-    color: #999;
+    letter-spacing: 0;
+    line-height: 2;
+    color: var(--gray-color);
     text-decoration: none;
-    transition: color 0.3s;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .home {
