@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&display=swap');
-
 :root {
     --width: 720px;
     --font-scale: 1.1rem;
@@ -42,7 +40,7 @@ body {
     line-height: 1.7;
     font-weight: 400;
     color: var(--text-color);
-    font-family: 'Noto Sans SC', system-ui, serif;
+    font-family: sans-serif;
     height: 100%;
     word-break: break-all;
 }
@@ -93,10 +91,6 @@ b {
     color: var(--heading-color);
 }
 
-table {
-    width: 100%;
-}
-
 pre {
     padding: 5px 12px;
     overflow: auto;
@@ -127,7 +121,7 @@ time,
 pre,
 code {
     font-size: 0.9em;
-    font-family: 'Noto Sans SC', monospace, serif;
+    font-family: sans-serif;
     background-color: var(--code-background-color);
     color: var(--code-color);
     border-radius: 0.3rem;
@@ -251,46 +245,45 @@ footer a {
 }
 
 .post-pagination ol {
-	list-style: none;
-	display: inline-flex;
-	padding: 0;
+    list-style: none;
+    display: inline-flex;
+    padding: 0;
 }
 
 .post-pagination .page-numbers,
 .post-pagination ol a {
-	width: 35px;
-	height: 35px;
-	line-height: 35px;
-	margin-right: 8px;
-	display: inline-block;
-	text-align: center;
-	border-radius: 4px;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    margin-right: 8px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 4px;
 }
 
 .post-pagination .pagination a:hover,
 .post-pagination .pagination .current,
 .post-pagination ol a:hover,
 .post-pagination ol .current a {
-	background: #333;
-	color: #fff;
-	text-decoration: none;
+    background: #333;
+    color: #fff;
+    text-decoration: none;
 }
 
 .post-pagination .page-numbers,
 .post-pagination ol a {
-	background: #f8f8f8;
-	color: #555;
+    background: #f8f8f8;
+    color: #555;
 }
 
 .post-pagination {
-	margin: 80px 0 50px;
+    margin: 80px 0 50px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
-
 }
 
 th,
@@ -301,13 +294,26 @@ td {
 }
 
 th {
-    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
+@media (max-width:600px) {
 
-tr:hover {
-    background-color: #f1f1f1;
+    th,
+    td {
+        display: block;
+        width: 100%;
+    }
+
+    th {
+        position: static;
+    }
+
+    tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
 }
