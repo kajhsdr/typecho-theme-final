@@ -14,10 +14,7 @@
 
 在修改了一些CSS后，pc 和 移动端 全100分。
 
-![移动端](https://github.com/user-attachments/assets/6d9e3aa4-338b-4eea-9a37-cdb20c7d59f6)
-![桌面端](https://github.com/user-attachments/assets/fa7ed9be-6fe6-4164-a577-be8d094e1631)
-
-[报告链接](https://pagespeed.web.dev/analysis/https-final-linkpark-site/6g63dloic6?hl=zh-cn&form_factor=mobile)
+如果你有兴趣，这里是 [报告链接](https://pagespeed.web.dev/analysis/https-final-linkpark-site/6g63dloic6?hl=zh-cn&form_factor=mobile)
 
 ### 待办
 
