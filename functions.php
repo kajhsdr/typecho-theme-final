@@ -26,6 +26,18 @@ function themeConfig($form)
     );
     $form->addInput($pjaxStatus);
 
+    $codeHighlight = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'codeHighlight',
+        [
+            'yes'   => '是',
+            'no'    => '否'
+        ],
+        'yes',
+        '是否启用代码高亮',
+        '开启后,使用 Prism.js 实现代码语法高亮'
+    );
+    $form->addInput($codeHighlight);
+
     $addhead = new \Typecho\Widget\Helper\Form\Element\Textarea(
         "addhead",
         null,

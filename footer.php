@@ -24,80 +24,232 @@
 
 </footer>
 
-<script src="//static-lab.6os.net/jquery/3.6.0/jquery.min.js"></script>
 <?php if ($this->options->pjaxStatus == 'yes'): ?>
-    <script src="//static-lab.6os.net/jquery-pjax/2.0.1/jquery.pjax.min.js"></script>
-    <script src="//static-lab.6os.net/nprogress/0.2.0/nprogress.min.js"></script>
-    <link rel="stylesheet" href="//static-lab.6os.net/nprogress/0.2.0/nprogress.min.css">
+<!-- PJAX 加载进度条 -->
+<div id="pjax-progress"></div>
 <?php endif; ?>
+
 <!-- 初始化 -->
 <script>
+    <?php if ($this->options->codeHighlight == 'yes'): ?>
+    // 代码高亮按需加载
+    let prismLoaded = false;
+
+    function loadPrism(callback) {
+        if (prismLoaded) {
+            callback && callback();
+            return;
+        }
+
+        // 加载 CSS
+        const cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = '//cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
+        document.head.appendChild(cssLink);
+
+        // 加载 JS
+        const script = document.createElement('script');
+        script.src = '//cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
+        script.onload = function() {
+            // 加载自动加载器插件
+            const autoloader = document.createElement('script');
+            autoloader.src = '//cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js';
+            autoloader.onload = function() {
+                prismLoaded = true;
+                callback && callback();
+            };
+            document.body.appendChild(autoloader);
+        };
+        document.body.appendChild(script);
+    }
+
+    function highlightCode() {
+        // 检查页面是否有代码块
+        const hasCodeBlocks = document.querySelector('pre code, code[class*="language-"]');
+
+        if (hasCodeBlocks) {
+            loadPrism(function() {
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                }
+            });
+        }
+    }
+    <?php endif; ?>
+
     // 初始化main容器
     function initMain() {
-        // 在这里可以添加页面初始化逻辑
+        <?php if ($this->options->codeHighlight == 'yes'): ?>
+        // 检查并高亮代码块
+        highlightCode();
+        <?php endif; ?>
         console.log('页面已加载');
     }
 
     <?php if ($this->options->pjaxStatus == 'yes'): ?>
-    // PJAX实现
-    $(document).pjax('a[href^="<?php $this->options->siteUrl(); ?>"]:not(a[target="_blank"], a[no-pjax])', {
-        container: '#main',
-        fragment: '#main',
-        timeout: 7000
-    }).on('pjax:send', function () {
-        // 显示进度条
-        NProgress.start();
-    }).on('submit', 'form[id=comment-form]', function (event) {
-        // 评论表单提交,替换为PJAX提交
-        event.preventDefault();
-        $.pjax.submit(event, {
-            container: '#main',
-            fragment: '#main'
-        });
-    }).on('pjax:beforeReplace', function (event) {
-        if (event.state.url.endsWith('/comment')) {
-            // 评论提交后,替换为PJAX跳转到评论页
-            $.pjax({
-                url: /#(comments|comment-\d+)$/.test(event.previousState.url) ? event.previousState.url : event.previousState.url + '#comments',
-                container: '#main',
-                fragment: '#main'
-            });
-        }
-    }).on('pjax:complete', function (event, data, status, xhr, options) {
-        if (event.relatedTarget) {
-            if (event.relatedTarget.tagName === 'FORM' && event.relatedTarget.id === 'comment-form') {
-                // 如果PJAX来源是评论表单,则显示提示信息
-                let message = (data.responseText.match(/<div class="container">\s*([\s\S]*?)\s*<\/div>/i) || [, ''])[1].trim();
-                if (message) {
-                    alert(message);
-                    $.pjax({
-                        url: xhr.url.replace(/\/comment$/, '/#comments'),
-                        container: '#main',
-                        fragment: '#main'
-                    });
+    // 原生 JavaScript PJAX 实现
+    (function() {
+        const siteUrl = '<?php $this->options->siteUrl(); ?>';
+        const mainContainer = document.getElementById('main');
+        const progressBar = document.getElementById('pjax-progress');
+
+        // 进度条控制
+        const progress = {
+            start: function() {
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                    progressBar.classList.add('active');
+                }
+            },
+            done: function() {
+                if (progressBar) {
+                    progressBar.style.width = '100%';
+                    setTimeout(() => {
+                        progressBar.classList.remove('active');
+                    }, 200);
                 }
             }
+        };
+
+        // 加载页面内容
+        function loadPage(url, pushState = true) {
+            progress.start();
+
+            fetch(url, {
+                headers: {
+                    'X-PJAX': 'true',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // 提取 #main 内容
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newMain = doc.getElementById('main');
+
+                if (newMain) {
+                    mainContainer.innerHTML = newMain.innerHTML;
+
+                    // 更新标题
+                    const newTitle = doc.querySelector('title');
+                    if (newTitle) {
+                        document.title = newTitle.textContent;
+                    }
+
+                    // 更新历史记录
+                    if (pushState) {
+                        history.pushState({ url: url }, '', url);
+                    }
+
+                    // 滚动到顶部或锚点
+                    if (url.includes('#')) {
+                        const hash = url.split('#')[1];
+                        const target = document.getElementById(hash);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+
+                    // 初始化页面
+                    initMain();
+                }
+            })
+            .catch(error => {
+                console.error('PJAX 加载失败:', error);
+                window.location.href = url;
+            })
+            .finally(() => {
+                progress.done();
+            });
         }
 
-        // PJAX完成,初始化main容器
-        initMain();
-    }).on('pjax:end', function () {
-        // 隐藏进度条
-        NProgress.done();
-    });
+        // 处理评论表单提交
+        function handleCommentSubmit(form) {
+            const formData = new FormData(form);
+            const url = form.action;
 
-    $(function () {
-        // 页面加载完成(直接访问),触发PJAX完成事件
-        $(document).trigger('pjax:complete');
-    });
+            progress.start();
 
-    $(window).on('popstate', function () {
-        // 历史记录状态发生变化时(前进后退),触发PJAX完成事件
-        $(document).trigger('pjax:complete');
-    });
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-PJAX': 'true',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // 提取提示消息
+                const match = html.match(/<div class="container">\s*([\s\S]*?)\s*<\/div>/i);
+                if (match && match[1].trim()) {
+                    alert(match[1].trim());
+                }
+
+                // 重新加载当前页面到评论区
+                const currentUrl = window.location.href.split('#')[0] + '#comments';
+                loadPage(currentUrl, false);
+            })
+            .catch(error => {
+                console.error('评论提交失败:', error);
+            })
+            .finally(() => {
+                progress.done();
+            });
+        }
+
+        // 事件委托: 拦截链接点击
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+
+            if (link &&
+                link.href &&
+                link.href.startsWith(siteUrl) &&
+                !link.hasAttribute('target') &&
+                !link.hasAttribute('no-pjax') &&
+                !link.href.endsWith('.xml') &&
+                !link.href.endsWith('.pdf')) {
+
+                e.preventDefault();
+                loadPage(link.href);
+            }
+        });
+
+        // 事件委托: 拦截评论表单提交
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+
+            if (form.id === 'comment-form') {
+                e.preventDefault();
+                handleCommentSubmit(form);
+            }
+        });
+
+        // 浏览器前进后退
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.url) {
+                loadPage(e.state.url, false);
+            } else {
+                loadPage(window.location.href, false);
+            }
+        });
+
+        // 初始化当前页面状态
+        history.replaceState({ url: window.location.href }, '', window.location.href);
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            initMain();
+        });
+    })();
     <?php else: ?>
     // 非PJAX,直接初始化main容器
-    initMain();
+    document.addEventListener('DOMContentLoaded', function() {
+        initMain();
+    });
     <?php endif; ?>
 </script>
 

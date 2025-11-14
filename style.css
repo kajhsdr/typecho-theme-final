@@ -121,7 +121,7 @@ time,
 pre,
 code {
     font-size: 0.9em;
-    font-family: sans-serif;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     background-color: var(--code-background-color);
     color: var(--code-color);
     border-radius: 0.3rem;
@@ -133,6 +133,21 @@ code {
 
 pre code {
     padding: 3px 0px;
+}
+
+/* 代码块优化 */
+pre[class*="language-"] {
+    padding: 15px;
+    margin: 1.5em 0;
+    overflow: auto;
+    max-height: 500px;
+    line-height: 1.5;
+}
+
+pre[class*="language-"] code {
+    background: none;
+    padding: 0;
+    font-size: 0.95em;
 }
 
 blockquote {
@@ -243,6 +258,30 @@ footer a {
     body {
         padding: 0;
     }
+}
+
+/* PJAX 加载进度条 */
+#pjax-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--link-color);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s;
+    width: 0%;
+}
+
+#pjax-progress.active {
+    opacity: 1;
+    animation: pjax-loading 2s ease-in-out infinite;
+}
+
+@keyframes pjax-loading {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 95%; }
 }
 
 .post-pagination ol {
