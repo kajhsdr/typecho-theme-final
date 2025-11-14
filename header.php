@@ -36,7 +36,6 @@
         <?php echo $this->options->addhead; ?>
     <?php endif; ?>
 </head>
-<body class="home">
+<body class="home" theme-mode="">
 <header>
-
 </header>

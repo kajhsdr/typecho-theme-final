@@ -13,9 +13,21 @@ if (!defined("__TYPECHO_ROOT_DIR__")) {
 }
 $this->need("header.php");
 ?>
-<a class="title" href="/">
-    <h1><?php $this->options->title(); ?></h1>
-</a>
+<div class="site-header-wrapper">
+    <a class="title" href="/">
+        <h1><?php $this->options->title(); ?></h1>
+    </a>
+    <?php if ($this->options->themeModeSelectStatus == 'yes' && $this->options->themeModeHeaderSelectStatus == 'yes'): ?>
+        <div id="themeMode-selector">
+            <select id="themeMode">
+                <option value="auto">跟随系统</option>
+                <option value="light">亮色模式</option>
+                <option value="dark">深色模式</option>
+                <option value="read">护眼模式</option>
+            </select>
+        </div>
+    <?php endif; ?>
+</div>
 <main id="main">
 
 <?php if ($this->have()): ?>

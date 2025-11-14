@@ -55,4 +55,54 @@ function themeConfig($form)
         _t("支持 HTML，可填写备案、统计等信息")
     );
     $form->addInput($addfoot);
+
+    $themeModeSelectStatus = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'themeModeSelectStatus',
+        [
+            'yes'   => '是',
+            'no'    => '否'
+        ],
+        'no',
+        '是否启用主题模式切换',
+        '开启后，全站支持切换亮色/深色/跟随系统模式'
+    );
+    $form->addInput($themeModeSelectStatus);
+
+    $themeModeHeaderSelectStatus = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'themeModeHeaderSelectStatus',
+        [
+            'yes'   => '是',
+            'no'    => '否'
+        ],
+        'yes',
+        '是否在页面顶部显示主题模式选择器',
+        '开启后，将在页面顶部显示主题模式下拉选择器，需同时开启主题模式切换'
+    );
+    $form->addInput($themeModeHeaderSelectStatus);
+
+    $defaultThemeMode = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'defaultThemeMode',
+        [
+            'auto'      => '跟随系统',
+            'light'     => '亮色模式',
+            'dark'      => '深色模式',
+            'read'      => '护眼模式',
+        ],
+        'auto',
+        '默认外观',
+        '指定未手动切换主题模式时全站的默认主题模式'
+    );
+    $form->addInput($defaultThemeMode);
+
+    $themeModeMinitoolStatus = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'themeModeMinitoolStatus',
+        [
+            'yes'   => '是',
+            'no'    => '否'
+        ],
+        'no',
+        '是否启用主题模式切换悬浮按钮',
+        '开启后，将在网页右下角显示主题模式切换按钮，需同时开启主题模式切换'
+    );
+    $form->addInput($themeModeMinitoolStatus);
 }
