@@ -44,16 +44,16 @@
         // 加载 CSS
         const cssLink = document.createElement('link');
         cssLink.rel = 'stylesheet';
-        cssLink.href = '//cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
+        cssLink.href = '<?php $this->options->themeUrl("assets/css/prism.min.css"); ?>';
         document.head.appendChild(cssLink);
 
         // 加载 JS
         const script = document.createElement('script');
-        script.src = '//cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
+        script.src = '<?php $this->options->themeUrl("assets/js/prism.min.js"); ?>';
         script.onload = function() {
             // 加载自动加载器插件
             const autoloader = document.createElement('script');
-            autoloader.src = '//cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js';
+            autoloader.src = '<?php $this->options->themeUrl("assets/js/prism-autoloader.min.js"); ?>';
             autoloader.onload = function() {
                 prismLoaded = true;
                 callback && callback();
