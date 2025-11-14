@@ -2,7 +2,7 @@
     exit();
 } ?>
 <?php $this->need("header.php"); ?>
-<main>
+<main id="main">
 <h3 style="margin-bottom:0"><?php $this->archiveTitle(
     [
         "category" => _t("分类 %s 下的文章"),

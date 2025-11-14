@@ -2,14 +2,6 @@
 
 经常换主题是不好的事情。但是如果你需要，可以试试我这款。
 
-### 介绍
-
-这是我业余时间做出来的，很简单简洁。如果CSS和HTML压缩之后，页面可以到2K以内。
-
-使用本主题，不需要声明主题来源，不保留任何权限。
-
-并且我认为final应该是结构最简单的Typecho主题了，所以修改成本很低，有什么问题可以直接提issue，或者你可以试试自己修改。
-
 ### 预览
 
 [https://final.linkpark.site](https://final.linkpark.site)
@@ -18,7 +10,18 @@
 
 ### Pagespeed Insights
 
-全100， [报告链接](https://pagespeed.web.dev/analysis/https-final-linkpark-site/6g63dloic6?hl=zh-cn&form_factor=mobile)
+因为Windows10&11在更新之后添加了Noto Sans字体，并且Chrome默认把Noto Sans设置为了系统无衬线字体的默认字体，所以移除掉了字体引用部分。
+
+在修改了一些CSS后，pc 和 移动端 全100分。
+
+如果你有兴趣，这里是 [报告链接](https://pagespeed.web.dev/analysis/https-final-linkpark-site/6g63dloic6?hl=zh-cn&form_factor=mobile)
+
+### 待办
+
+- [x] SEO优化
+- [x] 修改一些一直的问题，补充完整的样式
+- [x] 优化导航（菜单）的位置
+- [ ] 搜索功能（我写了一个版本，是按`/`键出现搜索弹窗的，但是后来发现手机没办法搜索…）
 
 ### hexo版本
 

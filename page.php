@@ -2,7 +2,7 @@
     exit();
 } ?>
 <?php $this->need("header.php"); ?>
-<main>
+<main id="main">
     <h1><?php $this->title(); ?></h1>
     <p>
         <i>
@@ -18,5 +18,6 @@
         <p>此页面内容尚未发布。</p>
     <?php endif; ?>
     </article>
+    <?php $this->need('comments.php'); ?>
 </main>
 <?php $this->need("footer.php"); ?>

@@ -16,7 +16,7 @@ $this->need("header.php");
 <a class="title" href="/">
     <h1><?php $this->options->title(); ?></h1>
 </a>
-<main>
+<main id="main">
 
 <?php if ($this->have()): ?>
 <?php while ($this->next()): ?>

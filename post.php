@@ -2,7 +2,7 @@
     exit();
 } ?>
 <?php $this->need("header.php"); ?>
-<main>
+<main id="main">
     <h1><a href="<?php $this->options->siteUrl(); ?>"><?php $this->title(); ?></a></h1>
     <p>
         <i>
@@ -23,5 +23,6 @@
     <p class="tags">
         <?php $this->tags(" · ", true, " "); ?>
     </p>
+    <?php $this->need('comments.php'); ?>
 </main>
 <?php $this->need("footer.php"); ?>

@@ -14,6 +14,18 @@ function themeConfig($form)
     );
     $form->addInput($logoUrl);
 
+    $pjaxStatus = new \Typecho\Widget\Helper\Form\Element\Radio(
+        'pjaxStatus',
+        [
+            'yes'   => '是',
+            'no'    => '否'
+        ],
+        'no',
+        '是否启用全站 PJAX',
+        '开启后,全站页面实现 PJAX 无刷新跳转'
+    );
+    $form->addInput($pjaxStatus);
+
     $addhead = new \Typecho\Widget\Helper\Form\Element\Textarea(
         "addhead",
         null,

@@ -13,7 +13,7 @@ if (!function_exists("_e")) {
 
 $this->need("header.php");
 ?>
-<main>
+<main id="main">
     <h1> 404 - <?php _e("页面没找到"); ?></h1>
     <h3> <?php _e("你想查看的页面已被转移或删除了"); ?></h3>
 </main>
