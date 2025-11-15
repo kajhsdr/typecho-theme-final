@@ -15,7 +15,7 @@
     </p>
     <article>
     <?php if ($this->content): ?>
-        <?php $this->content(); ?>
+        <?php FinalTheme_LivePhotoHelper::renderContent($this); ?>
     <?php else: ?>
         <p>此文章内容尚未发布。</p>
     <?php endif; ?>
@@ -23,6 +23,8 @@
     <p class="tags">
         <?php $this->tags(" · ", true, " "); ?>
     </p>
-    <?php $this->need('comments.php'); ?>
+    <?php if (!isset($this->options->commentAreaStatus) || $this->options->commentAreaStatus !== 'no'): ?>
+        <?php $this->need('comments.php'); ?>
+    <?php endif; ?>
 </main>
 <?php $this->need("footer.php"); ?>

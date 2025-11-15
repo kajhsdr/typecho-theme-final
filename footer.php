@@ -20,6 +20,25 @@
 
 <span>
 &copy; 2024 <a href="<?php $this->options->siteUrl(); ?>"><?php $this->options->title(); ?></a>
+<?php if ($this->options->icpBeian): ?> | <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener"><?php $this->options->icpBeian(); ?></a><?php endif; ?>
+</span>
+
+<span style="margin-top:10px;display:flex;gap:15px;justify-content:center">
+<?php if ($this->options->github): ?>
+<a href="<?php $this->options->github(); ?>" target="_blank" rel="noopener" title="GitHub">
+<svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+</a>
+<?php endif; ?>
+<?php if ($this->options->weibo): ?>
+<a href="<?php $this->options->weibo(); ?>" target="_blank" rel="noopener" title="微博">
+<svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M9.68 8.43c-.17.12-.36.22-.56.3-.2.08-.42.12-.64.12-.43 0-.82-.15-1.13-.42-.32-.28-.48-.65-.48-1.09 0-.25.05-.48.16-.69.1-.21.25-.39.43-.54.18-.14.39-.25.62-.33.23-.07.47-.11.72-.11.44 0 .83.14 1.15.41.32.27.48.63.48 1.06 0 .26-.06.5-.17.71-.11.21-.27.4-.48.55zm3.8-2.36c-.14-.43-.37-.81-.68-1.13-.31-.32-.68-.57-1.1-.74-.42-.17-.87-.26-1.35-.26-.69 0-1.33.16-1.91.47-.58.31-1.05.74-1.4 1.28-.35.54-.53 1.15-.53 1.82 0 .5.1.97.29 1.41.19.44.46.82.81 1.14.35.32.76.57 1.22.75.46.18.95.27 1.47.27.68 0 1.31-.15 1.88-.46.57-.31 1.03-.73 1.37-1.27.34-.54.51-1.14.51-1.81 0-.49-.09-.96-.28-1.39zM16 8c0 .74-.14 1.44-.42 2.09-.28.65-.67 1.22-1.17 1.7-.5.48-1.09.86-1.76 1.13-.67.27-1.39.41-2.15.41-1.04 0-2-.21-2.88-.62-.88-.41-1.62-.98-2.22-1.7C4.8 10.29 4.33 9.47 4 8.56c-.33-.91-.5-1.87-.5-2.88 0-.74.14-1.44.42-2.09.28-.65.67-1.22 1.17-1.7.5-.48 1.09-.86 1.76-1.13C7.52.49 8.24.35 9 .35c1.04 0 2 .21 2.88.62.88.41 1.62.98 2.22 1.7.6.72 1.07 1.54 1.4 2.45.33.91.5 1.87.5 2.88z"/></svg>
+</a>
+<?php endif; ?>
+<?php if ($this->options->twitter): ?>
+<a href="<?php $this->options->twitter(); ?>" target="_blank" rel="noopener" title="Twitter">
+<svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z"/></svg>
+</a>
+<?php endif; ?>
 </span>
 
 </footer>
@@ -47,11 +66,79 @@
 </div>
 <?php endif; ?>
 
+<?php
+$commentAreaEnabled = !isset($this->options->commentAreaStatus) || $this->options->commentAreaStatus !== 'no';
+$livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->livePhotoStatus === 'yes';
+?>
+
+
+<!-- DOM 批量调度器，降低强制同步布局 -->
+<script>
+    (function() {
+        if (window.DomBatch) {
+            return;
+        }
+
+        const queues = { read: [], write: [] };
+        let scheduled = false;
+
+        function runQueue(type) {
+            const tasks = queues[type].splice(0, queues[type].length);
+            tasks.forEach(function(task) {
+                try {
+                    task();
+                } catch (err) {
+                    console.error('DOM 批量任务异常', err);
+                }
+            });
+        }
+
+        function scheduleFlush() {
+            if (scheduled) {
+                return;
+            }
+
+            scheduled = true;
+            requestAnimationFrame(function() {
+                runQueue('read');
+                runQueue('write');
+                scheduled = false;
+
+                if (queues.read.length || queues.write.length) {
+                    scheduleFlush();
+                }
+            });
+        }
+
+        function enqueue(type, task) {
+            if (typeof task !== 'function') {
+                return;
+            }
+
+            queues[type].push(task);
+            scheduleFlush();
+        }
+
+        window.DomBatch = {
+            read: function(task) {
+                enqueue('read', task);
+            },
+            write: function(task) {
+                enqueue('write', task);
+            }
+        };
+    })();
+</script>
+
 <!-- 主题模式切换脚本 -->
 <?php if ($this->options->themeModeSelectStatus == 'yes'): ?>
 <script>
-    // 主题模式切换逻辑
     (function() {
+        const domBatch = window.DomBatch || {
+            read: function(task) { task && task(); },
+            write: function(task) { task && task(); }
+        };
+
         const body = document.querySelector('body');
         const themeModeSelect = document.getElementById('themeMode');
         const systemThemeModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
@@ -60,41 +147,24 @@
         let isAutoThemeMode = false;
 
         <?php if ($this->options->codeHighlight == 'yes'): ?>
-        // 代码高亮主题切换函数
+        // 代码高亮主题切换
         function updateCodeHighlightTheme(themeMode) {
-            // 检查页面是否有代码块
-            const hasCodeBlocks = document.querySelector('pre code, code[class*="language-"]');
+            if (!document.querySelector('pre code, code[class*="language-"]')) return;
 
-            // 只有当页面有代码块时才加载代码高亮主题
-            if (!hasCodeBlocks) {
-                return;
-            }
+            const existing = document.querySelector('link[data-prism-theme]');
+            if (existing) existing.remove();
 
-            // 移除现有的 Prism 主题 CSS
-            const existingPrismCss = document.querySelector('link[data-prism-theme]');
-            if (existingPrismCss) {
-                existingPrismCss.remove();
-            }
+            const themes = {
+                dark: 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css',
+                read: 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-solarizedlight.min.css',
+                light: '<?php $this->options->themeUrl("static/css/prism.min.css"); ?>'
+            };
 
-            // 根据主题模式选择代码高亮主题
-            let prismThemeUrl = '';
-            if (themeMode === 'dark') {
-                // 深色模式使用 Tomorrow Night 主题
-                prismThemeUrl = 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css';
-            } else if (themeMode === 'read') {
-                // 护眼模式使用 Solarized Light 主题
-                prismThemeUrl = 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-solarizedlight.min.css';
-            } else {
-                // 亮色模式使用默认主题
-                prismThemeUrl = '<?php $this->options->themeUrl("assets/css/prism.min.css"); ?>';
-            }
-
-            // 加载新的主题 CSS
-            const cssLink = document.createElement('link');
-            cssLink.rel = 'stylesheet';
-            cssLink.href = prismThemeUrl;
-            cssLink.setAttribute('data-prism-theme', themeMode);
-            document.head.appendChild(cssLink);
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = themes[themeMode] || themes.light;
+            link.setAttribute('data-prism-theme', themeMode);
+            document.head.appendChild(link);
         }
         <?php endif; ?>
 
@@ -109,9 +179,7 @@
         // 设置主题模式
         function setBodyThemeMode(themeMode) {
             body.setAttribute('theme-mode', themeMode);
-
             <?php if ($this->options->codeHighlight == 'yes'): ?>
-            // 根据主题模式切换代码高亮主题
             updateCodeHighlightTheme(themeMode);
             <?php endif; ?>
         }
@@ -129,20 +197,21 @@
         // 初始化主题模式
         function initThemeMode() {
             const savedThemeMode = getCurrentThemeMode();
+            const actualThemeMode = savedThemeMode === 'auto'
+                ? (systemThemeModeMedia.matches ? 'dark' : 'light')
+                : savedThemeMode;
 
             // 同步下拉选择器（如果存在）
             if (themeModeSelect) {
                 themeModeSelect.value = savedThemeMode;
             }
 
-            if (savedThemeMode === 'auto') {
-                isAutoThemeMode = true;
-                const initialThemeMode = systemThemeModeMedia.matches ? 'dark' : 'light';
-                setBodyThemeMode(initialThemeMode);
-            } else {
-                isAutoThemeMode = false;
-                setBodyThemeMode(savedThemeMode);
-            }
+            isAutoThemeMode = savedThemeMode === 'auto';
+            body.setAttribute('theme-mode', actualThemeMode);
+
+            <?php if ($this->options->codeHighlight == 'yes'): ?>
+            updateCodeHighlightTheme(actualThemeMode);
+            <?php endif; ?>
         }
 
         // 切换到指定主题模式
@@ -198,60 +267,76 @@
 
 <!-- 初始化 -->
 <script>
+    (function() {
+        const domBatch = window.DomBatch || {
+            read: function(task) { task && task(); },
+            write: function(task) { task && task(); }
+        };
     <?php if ($this->options->codeHighlight == 'yes'): ?>
-    // 代码高亮按需加载
-    let prismLoaded = false;
+        // 代码高亮按需加载
+        let prismLoaded = false;
 
-    function loadPrism(callback) {
-        if (prismLoaded) {
-            callback && callback();
-            return;
-        }
+    function highlightCode() {
+        if (!document.querySelector('pre code, code[class*="language-"]')) return;
+        if (prismLoaded) { Prism.highlightAll(); return; }
 
-        // 不自动加载 CSS，CSS 由主题模式控制加载
-
-        // 加载 JS
         const script = document.createElement('script');
-        script.src = '<?php $this->options->themeUrl("assets/js/prism.min.js"); ?>';
-        script.onload = function() {
-            // 加载自动加载器插件
+        script.src = '<?php $this->options->themeUrl("static/js/prism.min.js"); ?>';
+        script.onload = () => {
             const autoloader = document.createElement('script');
-            autoloader.src = '<?php $this->options->themeUrl("assets/js/prism-autoloader.min.js"); ?>';
-            autoloader.onload = function() {
-                prismLoaded = true;
-                callback && callback();
-            };
+            autoloader.src = '<?php $this->options->themeUrl("static/js/prism-autoloader.min.js"); ?>';
+            autoloader.onload = () => { prismLoaded = true; Prism.highlightAll(); };
             document.body.appendChild(autoloader);
         };
         document.body.appendChild(script);
     }
+    <?php endif; ?>
 
-    function highlightCode() {
-        // 检查页面是否有代码块
-        const hasCodeBlocks = document.querySelector('pre code, code[class*="language-"]');
+    <?php if ($livePhotoEnabled): ?>
+        // Live Photo 按需加载
+        let livePhotoLoaded = false;
 
-        if (hasCodeBlocks) {
-            loadPrism(function() {
-                if (typeof Prism !== 'undefined') {
-                    Prism.highlightAll();
-                }
-            });
+    function initializeLivePhotos() {
+        const livePhotos = document.querySelectorAll('[data-live-photo]');
+        if (!livePhotos.length) return;
+        if (livePhotoLoaded) {
+            livePhotos.forEach(el => !el.classList.contains('lpk-live-photo-player') && LivePhotosKit.augmentElementAsPlayer(el));
+            window.finalThemeInitMotionPhoto?.();
+            return;
         }
+
+        const lpkScript = document.createElement('script');
+        lpkScript.src = 'https://static.jdaa.xyz/js/livephotoskit.js';
+        lpkScript.onload = () => {
+            const motionScript = document.createElement('script');
+            motionScript.src = '<?php $this->options->themeUrl("static/js/motionphoto.js"); ?>';
+            motionScript.onload = () => {
+                livePhotoLoaded = true;
+                livePhotos.forEach(el => LivePhotosKit.augmentElementAsPlayer(el));
+                window.finalThemeInitMotionPhoto?.();
+            };
+            document.body.appendChild(motionScript);
+        };
+        document.body.appendChild(lpkScript);
     }
     <?php endif; ?>
 
-    // 初始化main容器
-    function initMain() {
+        // 初始化main容器
+        function initMain() {
         <?php if ($this->options->codeHighlight == 'yes'): ?>
-        // 检查并高亮代码块
-        highlightCode();
+            // 检查并高亮代码块
+            highlightCode();
         <?php endif; ?>
-        console.log('页面已加载');
-    }
+        <?php if ($livePhotoEnabled): ?>
+            // 检查并初始化 Live Photos
+            initializeLivePhotos();
+        <?php endif; ?>
+            console.log('页面已加载');
+        }
 
     <?php if ($this->options->pjaxStatus == 'yes'): ?>
-    // 原生 JavaScript PJAX 实现
-    (function() {
+        // 原生 JavaScript PJAX 实现
+        (function() {
         const siteUrl = '<?php $this->options->siteUrl(); ?>';
         const mainContainer = document.getElementById('main');
         const progressBar = document.getElementById('pjax-progress');
@@ -260,15 +345,21 @@
         const progress = {
             start: function() {
                 if (progressBar) {
-                    progressBar.style.width = '0%';
-                    progressBar.classList.add('active');
+                    domBatch.write(function() {
+                        progressBar.style.width = '0%';
+                        progressBar.classList.add('active');
+                    });
                 }
             },
             done: function() {
                 if (progressBar) {
-                    progressBar.style.width = '100%';
+                    domBatch.write(function() {
+                        progressBar.style.width = '100%';
+                    });
                     setTimeout(() => {
-                        progressBar.classList.remove('active');
+                        domBatch.write(function() {
+                            progressBar.classList.remove('active');
+                        });
                     }, 200);
                 }
             }
@@ -292,32 +383,36 @@
                 const newMain = doc.getElementById('main');
 
                 if (newMain) {
-                    mainContainer.innerHTML = newMain.innerHTML;
-
-                    // 更新标题
+                    const newContent = newMain.innerHTML;
                     const newTitle = doc.querySelector('title');
-                    if (newTitle) {
-                        document.title = newTitle.textContent;
-                    }
+                    const newTitleText = newTitle ? newTitle.textContent : '';
+                    const hashIndex = url.indexOf('#');
+                    const hash = hashIndex > -1 ? url.slice(hashIndex + 1) : null;
 
-                    // 更新历史记录
+                    domBatch.write(function() {
+                        mainContainer.innerHTML = newContent;
+                        if (newTitleText) {
+                            document.title = newTitleText;
+                        }
+                    });
+
                     if (pushState) {
                         history.pushState({ url: url }, '', url);
                     }
 
-                    // 滚动到顶部或锚点
-                    if (url.includes('#')) {
-                        const hash = url.split('#')[1];
-                        const target = document.getElementById(hash);
-                        if (target) {
-                            target.scrollIntoView({ behavior: 'smooth' });
+                    domBatch.write(function() {
+                        if (hash) {
+                            const target = document.getElementById(hash);
+                            if (target) {
+                                target.scrollIntoView({ behavior: 'smooth' });
+                            } else {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        } else {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         }
-                    } else {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-
-                    // 初始化页面
-                    initMain();
+                        initMain();
+                    });
                 }
             })
             .catch(error => {
@@ -329,6 +424,7 @@
             });
         }
 
+        <?php if ($commentAreaEnabled): ?>
         // 处理评论表单提交
         function handleCommentSubmit(form) {
             const formData = new FormData(form);
@@ -363,6 +459,7 @@
                 progress.done();
             });
         }
+        <?php endif; ?>
 
         // 事件委托: 拦截链接点击
         document.addEventListener('click', function(e) {
@@ -381,6 +478,7 @@
             }
         });
 
+        <?php if ($commentAreaEnabled): ?>
         // 事件委托: 拦截评论表单提交
         document.addEventListener('submit', function(e) {
             const form = e.target;
@@ -390,6 +488,7 @@
                 handleCommentSubmit(form);
             }
         });
+        <?php endif; ?>
 
         // 浏览器前进后退
         window.addEventListener('popstate', function(e) {
@@ -408,12 +507,13 @@
             initMain();
         });
     })();
-    <?php else: ?>
-    // 非PJAX,直接初始化main容器
-    document.addEventListener('DOMContentLoaded', function() {
-        initMain();
-    });
-    <?php endif; ?>
+        <?php else: ?>
+        // 非PJAX,直接初始化main容器
+        document.addEventListener('DOMContentLoaded', function() {
+            initMain();
+        });
+        <?php endif; ?>
+    })();
 </script>
 
 </body>

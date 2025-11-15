@@ -13,11 +13,13 @@
     </p>
     <article>
     <?php if ($this->content): ?>
-        <?php $this->content(); ?>
+        <?php FinalTheme_LivePhotoHelper::renderContent($this); ?>
     <?php else: ?>
         <p>此页面内容尚未发布。</p>
     <?php endif; ?>
     </article>
-    <?php $this->need('comments.php'); ?>
+    <?php if (!isset($this->options->commentAreaStatus) || $this->options->commentAreaStatus !== 'no'): ?>
+        <?php $this->need('comments.php'); ?>
+    <?php endif; ?>
 </main>
 <?php $this->need("footer.php"); ?>
