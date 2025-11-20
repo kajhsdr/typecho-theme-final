@@ -155,8 +155,8 @@ $livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->li
             if (existing) existing.remove();
 
             const themes = {
-                dark: 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css',
-                read: 'https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-solarizedlight.min.css',
+                dark: '<?php $this->options->themeUrl("static/css/prism-tomorrow.min.css"); ?>',
+                read: '<?php $this->options->themeUrl("static/css/prism-solarizedlight.min.css"); ?>',
                 light: '<?php $this->options->themeUrl("static/css/prism.min.css"); ?>'
             };
 
@@ -176,9 +176,11 @@ $livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->li
             }
         });
 
-        // 设置主题模式
+        // 设置主题模式 - 优化强制重排: 批量写入
         function setBodyThemeMode(themeMode) {
-            body.setAttribute('theme-mode', themeMode);
+            domBatch.write(function() {
+                body.setAttribute('theme-mode', themeMode);
+            });
             <?php if ($this->options->codeHighlight == 'yes'): ?>
             updateCodeHighlightTheme(themeMode);
             <?php endif; ?>
@@ -194,34 +196,40 @@ $livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->li
             return localStorage.getItem('theme-mode') || '<?php echo $this->options->defaultThemeMode ?>';
         }
 
-        // 初始化主题模式
+        // 初始化主题模式 - 优化强制重排: 批量操作
         function initThemeMode() {
             const savedThemeMode = getCurrentThemeMode();
             const actualThemeMode = savedThemeMode === 'auto'
                 ? (systemThemeModeMedia.matches ? 'dark' : 'light')
                 : savedThemeMode;
 
-            // 同步下拉选择器（如果存在）
-            if (themeModeSelect) {
-                themeModeSelect.value = savedThemeMode;
-            }
-
             isAutoThemeMode = savedThemeMode === 'auto';
-            body.setAttribute('theme-mode', actualThemeMode);
+
+            // 批量DOM写入操作
+            domBatch.write(function() {
+                // 同步下拉选择器（如果存在）
+                if (themeModeSelect) {
+                    themeModeSelect.value = savedThemeMode;
+                }
+                body.setAttribute('theme-mode', actualThemeMode);
+            });
 
             <?php if ($this->options->codeHighlight == 'yes'): ?>
             updateCodeHighlightTheme(actualThemeMode);
             <?php endif; ?>
         }
 
-        // 切换到指定主题模式
+        // 切换到指定主题模式 - 优化强制重排: 批量写入
         function switchToThemeMode(themeMode) {
             saveThemeMode(themeMode);
 
-            // 同步下拉选择器（如果存在）
-            if (themeModeSelect) {
-                themeModeSelect.value = themeMode;
-            }
+            // 批量DOM写入操作
+            domBatch.write(function() {
+                // 同步下拉选择器（如果存在）
+                if (themeModeSelect) {
+                    themeModeSelect.value = themeMode;
+                }
+            });
 
             if (themeMode === 'auto') {
                 isAutoThemeMode = true;
@@ -306,7 +314,7 @@ $livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->li
         }
 
         const lpkScript = document.createElement('script');
-        lpkScript.src = 'https://static.jdaa.xyz/js/livephotoskit.js';
+        lpkScript.src = '<?php $this->options->themeUrl("static/js/livephotoskit.js"); ?>';
         lpkScript.onload = () => {
             const motionScript = document.createElement('script');
             motionScript.src = '<?php $this->options->themeUrl("static/js/motionphoto.js"); ?>';
@@ -321,6 +329,162 @@ $livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->li
     }
     <?php endif; ?>
 
+    <?php if (isset($this->options->imageLazyloadStatus) && $this->options->imageLazyloadStatus === 'yes'): ?>
+        // 图片懒加载 (基于 Intersection Observer)
+        let imageObserver = null;
+
+    function initImageLazyload() {
+        const lazyImages = document.querySelectorAll('img.lazyload[data-src]');
+        if (!lazyImages.length) return;
+
+        // 如果浏览器不支持 IntersectionObserver，直接加载所有图片
+        if (!('IntersectionObserver' in window)) {
+            lazyImages.forEach(img => {
+                img.src = img.dataset.src;
+                img.classList.remove('lazyload');
+                img.classList.add('lazyloaded');
+            });
+            return;
+        }
+
+        // 清理旧的观察器
+        if (imageObserver) {
+            imageObserver.disconnect();
+        }
+
+        // 创建 Intersection Observer
+        imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.dataset.src;
+
+                    if (src) {
+                        // 添加加载状态
+                        img.classList.add('loading');
+
+                        // 预加载图片
+                        const tempImg = new Image();
+                        tempImg.onload = () => {
+                            img.src = src;
+                            img.classList.remove('lazyload', 'loading');
+                            img.classList.add('lazyloaded');
+                        };
+                        tempImg.onerror = () => {
+                            img.classList.remove('lazyload', 'loading');
+                            img.classList.add('lazyload-error');
+                            // 设置备用图片或提示
+                            img.alt = '图片加载失败';
+                            img.title = '无法加载图片: ' + src;
+                        };
+                        tempImg.src = src;
+                    }
+
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',  // 提前 50px 开始加载
+            threshold: 0.01
+        });
+
+        // 观察所有懒加载图片
+        lazyImages.forEach(img => imageObserver.observe(img));
+    }
+    <?php endif; ?>
+
+        // GLightbox 初始化（优化版 - 延迟加载）
+        let lightbox = null;
+        let glightboxLoaded = false;
+
+        // 延迟加载 GLightbox 资源
+        function loadGLightbox(callback) {
+            if (glightboxLoaded) {
+                callback && callback();
+                return;
+            }
+
+            // 加载 CSS
+            const css = document.createElement('link');
+            css.rel = 'stylesheet';
+            css.href = '<?php $this->options->themeUrl("static/css/glightbox.min.css"); ?>';
+            document.head.appendChild(css);
+
+            // 加载 JS
+            const script = document.createElement('script');
+            script.src = '<?php $this->options->themeUrl("static/js/glightbox.min.js"); ?>';
+            script.onload = function() {
+                glightboxLoaded = true;
+                callback && callback();
+            };
+            document.body.appendChild(script);
+        }
+
+        function initGLightbox() {
+            if (lightbox) lightbox.destroy();
+
+            <?php if (isset($this->options->imageLazyloadStatus) && $this->options->imageLazyloadStatus === 'yes'): ?>
+            // 懒加载模式：手动包装普通文章图片
+            const images = document.querySelectorAll('article img');
+
+            images.forEach(img => {
+                // 1. 跳过已被链接包裹的图片（Gallery 已有 <a> 包裹，无需重复处理）
+                if (img.parentElement.tagName === 'A') {
+                    return;
+                }
+
+                // 2. 跳过 Live Photo / Motion Photo 容器内的图片（需要立即显示以支持交互）
+                if (img.closest('[data-live-photo]') || img.closest('#files')) {
+                    return;
+                }
+
+                // 获取真实图片地址
+                const realSrc = img.dataset.src || img.src;
+
+                // 跳过占位图
+                if (realSrc.startsWith('data:image/')) {
+                    return;
+                }
+
+                // 为普通文章图片创建包裹链接
+                const link = document.createElement('a');
+                link.href = realSrc;
+                link.setAttribute('data-gallery', 'article-images');
+                link.className = 'glightbox';
+
+                // 替换图片位置
+                img.parentNode.insertBefore(link, img);
+                link.appendChild(img);
+            });
+
+            // 初始化 GLightbox
+            lightbox = GLightbox({
+                selector: '.glightbox',
+                touchNavigation: true,
+                loop: true,
+                autoplayVideos: false,
+                openEffect: 'fade',
+                closeEffect: 'fade',
+                cssEfects: {
+                    fade: { in: 'fadeIn', out: 'fadeOut' }
+                }
+            });
+            <?php else: ?>
+            // 非懒加载模式：直接选择器
+            lightbox = GLightbox({
+                selector: '.glightbox, article img:not([data-live-photo] img):not(#files img):not(.gallery img)',
+                touchNavigation: true,
+                loop: true,
+                autoplayVideos: false,
+                openEffect: 'fade',
+                closeEffect: 'fade',
+                cssEfects: {
+                    fade: { in: 'fadeIn', out: 'fadeOut' }
+                }
+            });
+            <?php endif; ?>
+        }
+
         // 初始化main容器
         function initMain() {
         <?php if ($this->options->codeHighlight == 'yes'): ?>
@@ -331,6 +495,16 @@ $livePhotoEnabled = isset($this->options->livePhotoStatus) && $this->options->li
             // 检查并初始化 Live Photos
             initializeLivePhotos();
         <?php endif; ?>
+        <?php if (isset($this->options->imageLazyloadStatus) && $this->options->imageLazyloadStatus === 'yes'): ?>
+            // 初始化图片懒加载
+            initImageLazyload();
+        <?php endif; ?>
+            // 延迟加载 GLightbox（仅在有图片时加载）
+            if (document.querySelector('article img, .glightbox, .gallery')) {
+                loadGLightbox(function() {
+                    initGLightbox();
+                });
+            }
             console.log('页面已加载');
         }
 

@@ -80,13 +80,14 @@ body {
     font-weight: 400;
     color: var(--text-color);
     font-family: sans-serif;
-    height: 100%;
     word-break: break-all;
+    min-height: 100vh; /* 最小高度为视口高度,允许内容超出 */
+    display: flex;
+    flex-direction: column;
 }
 
 html {
     scroll-behavior: smooth;
-    height: 100%;
 }
 
 time {
@@ -163,6 +164,14 @@ img {
     max-width: 100%;
     height: auto;
     border-radius: 0.3rem;
+}
+
+video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.3rem;
+    display: block;
+    margin: 20px auto;
 }
 
 time,
@@ -566,4 +575,131 @@ th {
 
 [theme-mode="read"] .minitool-group .themeMode-minitool .bi-book {
     display: block;
+}
+
+/* 相册样式（优化版） */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.gallery a {
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    position: relative;
+    background: var(--code-background-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery a:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.gallery img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.gallery a:hover img {
+    transform: scale(1.05);
+}
+
+/* 相册加载状态 */
+.gallery a::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--gray-color);
+    border-top-color: transparent;
+    border-radius: 50%;
+    opacity: 0;
+    animation: gallery-loading 1s linear infinite;
+    pointer-events: none;
+}
+
+.gallery img.loading + a::before {
+    opacity: 1;
+}
+
+@keyframes gallery-loading {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 8px;
+    }
+
+    .gallery img {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .gallery img {
+        height: 120px;
+    }
+}
+
+/* 图片懒加载样式（增强版） */
+img.lazyload {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    background-color: var(--background-color);
+}
+
+img.lazyloaded {
+    opacity: 1;
+    background-color: transparent;
+}
+
+img.loading {
+    opacity: 0.5;
+    position: relative;
+    background-color: var(--background-color);
+}
+
+img.lazyload-error {
+    opacity: 0.3;
+    filter: grayscale(100%);
+    position: relative;
+    background-color: var(--code-background-color);
+}
+
+/* 图片加载失败提示 */
+img.lazyload-error::after {
+    content: '✕';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    color: var(--gray-color);
+    background: var(--background-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
 }
